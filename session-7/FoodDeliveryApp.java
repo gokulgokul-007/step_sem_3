@@ -1,0 +1,31 @@
+class Task implements Runnable {
+    private final String activity;
+
+    Task(String activity) { this.activity = activity; }
+
+    public void run() {
+        Thread t = Thread.currentThread();
+        for (int i = 1; i <= 3; i++) {
+            System.out.println("Thread: " + t.getName()
+                    + " | Priority: " + t.getPriority()
+                    + " | Activity: " + activity + " (step " + i + ")");
+            try { Thread.sleep(300); } catch (InterruptedException e) { }
+        }
+    }
+}
+
+public class FoodDeliveryApp {
+    public static void main(String[] args) {
+        Thread order = new Thread(new Task("Processing customer order"), "OrderProcessing");
+        Thread tracking = new Thread(new Task("Tracking delivery location"), "DeliveryTracking");
+        Thread notify = new Thread(new Task("Sending order-status notification"), "Notification");
+
+        order.setPriority(Thread.MAX_PRIORITY);     // most important
+        tracking.setPriority(Thread.NORM_PRIORITY);
+        notify.setPriority(Thread.MIN_PRIORITY);    // least urgent
+
+        order.start();
+        tracking.start();
+        notify.start();
+    }
+}
